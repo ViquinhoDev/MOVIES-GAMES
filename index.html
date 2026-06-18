@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MOVIES &amp; GAMES</title>
+  <style>
+    :root {
+      --bg: #070914;
+      --panel: rgba(12, 16, 36, 0.84);
+      --glass: rgba(255, 255, 255, 0.08);
+      --neon-pink: #ff2bd6;
+      --neon-blue: #2de2ff;
+      --neon-green: #58ff7a;
+      --neon-purple: #8f3dff;
+      --text: #f7f7ff;
+      --muted: #a9b2d6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scrollbar-color: var(--neon-blue) #080b1d;
+      scrollbar-width: thin;
+      scroll-behavior: smooth;
+    }
+
+    ::-webkit-scrollbar {
+      width: 14px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: linear-gradient(180deg, #050611, #111833, #050611);
+      border-left: 1px solid rgba(45, 226, 255, 0.18);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border: 3px solid #080b1d;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--neon-pink), var(--neon-blue), var(--neon-purple));
+      box-shadow: 0 0 18px rgba(45, 226, 255, 0.85);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 43, 214, 0.28), transparent 32rem),
+        radial-gradient(circle at 85% 20%, rgba(88, 255, 122, 0.12), transparent 26rem),
+        radial-gradient(circle at bottom right, rgba(45, 226, 255, 0.22), transparent 30rem),
+        linear-gradient(135deg, #050611 0%, #111833 50%, #070914 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 82%);
+      z-index: -1;
+    }
+
+    main {
+      width: min(1260px, 92vw);
+      margin: 0 auto;
+      padding: 64px 0 96px;
+      text-align: center;
+    }
+
+    .title {
+      font-size: clamp(3.4rem, 11vw, 10rem);
+      line-height: 0.92;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow:
+        0 0 12px var(--neon-blue),
+        0 0 28px var(--neon-pink),
+        0 0 58px rgba(143, 61, 255, 0.8);
+      animation: pulseGlow 2.7s ease-in-out infinite alternate;
+    }
+
+    .subtitle {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .category {
+      margin-top: 72px;
+      text-align: left;
+    }
+
+    .category-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-shadow: 0 0 22px rgba(45, 226, 255, 0.7);
+    }
+
+    .category-title::before {
+      content: "";
+      width: 12px;
+      height: 42px;
+      border-radius: 999px;
+      background: linear-gradient(var(--neon-pink), var(--neon-blue));
+      box-shadow: 0 0 22px var(--neon-blue);
+    }
+
+    .covers {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 26px;
+    }
+
+    .cover-card {
+      position: relative;
+      min-height: 430px;
+      border: 1px solid rgba(45, 226, 255, 0.38);
+      border-radius: 24px;
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), inset 0 0 28px rgba(45, 226, 255, 0.08);
+      transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .cover-card[open],
+    .cover-card:hover,
+    .cover-card:focus-within {
+      transform: translateY(-10px) scale(1.02);
+      border-color: var(--neon-pink);
+      box-shadow: 0 24px 70px rgba(255, 43, 214, 0.22), 0 0 34px rgba(45, 226, 255, 0.32);
+    }
+
+    .cover-card summary {
+      position: relative;
+      min-height: 430px;
+      display: block;
+      cursor: pointer;
+      list-style: none;
+      outline: none;
+    }
+
+    .cover-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .cover-card img {
+      width: 100%;
+      height: 430px;
+      display: block;
+      object-fit: cover;
+      filter: saturate(1.12) contrast(1.1);
+    }
+
+    .cover-card summary::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(145deg, rgba(255, 43, 214, 0.18), transparent 38%),
+        linear-gradient(to top, rgba(7, 9, 20, 0.95), rgba(7, 9, 20, 0.08));
+      z-index: 1;
+    }
+
+    .cover-label {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      z-index: 2;
+      padding: 14px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      color: var(--text);
+      background: rgba(3, 5, 14, 0.72);
+      backdrop-filter: blur(10px);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .click-hint {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+    }
+
+    .actions {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 88px;
+      z-index: 3;
+      display: grid;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(18px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .cover-card[open] .actions {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(255, 43, 214, 0.95), rgba(45, 226, 255, 0.95));
+      box-shadow: 0 0 22px rgba(45, 226, 255, 0.38);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: scale(1.04);
+      filter: brightness(1.12);
+      outline: none;
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, rgba(88, 255, 122, 0.9), rgba(45, 226, 255, 0.9));
+    }
+
+    @keyframes pulseGlow {
+      from { filter: drop-shadow(0 0 6px rgba(45, 226, 255, 0.6)); }
+      to { filter: drop-shadow(0 0 20px rgba(255, 43, 214, 0.8)); }
+    }
+
+    @media (max-width: 1080px) {
+      .covers {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        padding: 42px 0 72px;
+      }
+
+      .covers {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+
+      .cover-card,
+      .cover-card summary {
+        min-height: 380px;
+      }
+
+      .cover-card img {
+        height: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="title">MOVIES &amp; GAMES</h1>
+    <p class="subtitle">Baixe jogos gratuitamente, assista filmes com apenas um clique.</p>
+
+    <section class="category games" aria-labelledby="games-title">
+      <h2 class="category-title" id="games-title">GAMES</h2>
+      <div class="covers">
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 1">
+            <img src="https://picsum.photos/seed/game-cover-1/520/760" alt="Cover real temporário do game 1" />
+            <span class="cover-label">Game 1<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-1-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 2">
+            <img src="https://picsum.photos/seed/game-cover-2/520/760" alt="Cover real temporário do game 2" />
+            <span class="cover-label">Game 2<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-2-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 3">
+            <img src="https://picsum.photos/seed/game-cover-3/520/760" alt="Cover real temporário do game 3" />
+            <span class="cover-label">Game 3<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-3-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 4">
+            <img src="https://picsum.photos/seed/game-cover-4/520/760" alt="Cover real temporário do game 4" />
+            <span class="cover-label">Game 4<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-4-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 5">
+            <img src="https://picsum.photos/seed/game-cover-5/520/760" alt="Cover real temporário do game 5" />
+            <span class="cover-label">Game 5<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-5-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 6">
+            <img src="https://picsum.photos/seed/game-cover-6/520/760" alt="Cover real temporário do game 6" />
+            <span class="cover-label">Game 6<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-6-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 7">
+            <img src="https://picsum.photos/seed/game-cover-7/520/760" alt="Cover real temporário do game 7" />
+            <span class="cover-label">Game 7<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-7-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do game 8">
+            <img src="https://picsum.photos/seed/game-cover-8/520/760" alt="Cover real temporário do game 8" />
+            <span class="cover-label">Game 8<span class="click-hint">Clique para baixar</span></span>
+          </summary>
+          <div class="actions"><a class="btn" href="https://example.com/game-8-download" target="_blank" rel="noopener noreferrer">Baixar</a></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="category movies" aria-labelledby="movies-title">
+      <h2 class="category-title" id="movies-title">MOVIES</h2>
+      <div class="covers">
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 1">
+            <img src="https://upload.wikimedia.org/wikipedia/pt/3/3c/Michael_%28filme_2026%29.jpg?_=20260421150355" alt="Cover real temporário do filme 1" />
+            <span class="cover-label">Michael Jackson<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://redecanais.pet/michael-dublado-2026-1080p_476105f84.html" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+            <a class="btn secondary" href="https://redecanais.pet/michael-legendado-2026-1080p_65dbee6ab.html" target="_blank" rel="noopener noreferrer">Assistir legendado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 2">
+            <img src="https://images.purexbox.com/8a0bbb6f62341/among-us-cover.cover_300x.jpg" alt="Cover real temporário do filme 2" />
+            <span class="cover-label">Among Us<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://redecanais.pet/among-us-dublado-lista-de-episodios_994226bfe.html" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 3">
+            <img src="https://ingresso-a.akamaihd.net/prd/img/movie/toy-story-5/2a9f7d1e-400c-4caa-b989-c1fb513dd416.webp" alt="Cover real temporário do filme 3" />
+            <span class="cover-label">Toy story 5<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://pobreflix.army/assistir/filme/toy-story-5/" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+            <a class="btn secondary" href="https://pobreflix.army/assistir/filme/toy-story-5/" target="_blank" rel="noopener noreferrer">Assistir legendado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 4">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsJddKGcK5H1KkQng93TsJNVTuuZAwEBPxAg&s" alt="Cover real temporário do filme 4" />
+            <span class="cover-label">Super mario<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://redecanais.pet/search.php?keywords=super+mario" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+            <a class="btn secondary" href="https://redecanais.pet/search.php?keywords=super+mario" target="_blank" rel="noopener noreferrer">Assistir legendado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 5">
+            <img src="https://imusic.b-cdn.net/images/item/original/867/7333018019867.jpg?harry-potter-2021-harry-potter-1-and-the-philosopher-s-stone-dvd&class=scaled&v=1645812691" alt="Cover real temporário do filme 5" />
+            <span class="cover-label">Harry Potter<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://redecanais.pet/search.php?keywords=harry" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+            <a class="btn secondary" href="https://redecanais.pet/search.php?keywords=harry" target="_blank" rel="noopener noreferrer">Assistir legendado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 6">
+            <img src="https://m.media-amazon.com/images/M/MV5BOTA4YWRjYmMtM2UzZS00YjJlLTg3ZWQtMmE3MDc5MTFmOTYzXkEyXkFqcGc@._V1_.jpg" alt="Cover real temporário do filme 6" />
+            <span class="cover-label">A Família Mitchell e a Revolta das Máquinas<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://redecanais.pet/a-familia-mitchell-e-a-revolta-das-maquinas-dublado-2021-1080p_f1deca9b5.html" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 7">
+            <img src="https://upload.wikimedia.org/wikipedia/pt/5/53/The_Amazing_Spider-Man_Poster.jpg" alt="Cover real temporário do filme 7" />
+            <span class="cover-label">Homem-Aranha no Aranhaverso<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://redecanais.pet/a-familia-mitchell-e-a-revolta-das-maquinas-dublado-2021-1080p_f1deca9b5.html" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+            <a class="btn secondary" href="https://redecanais.pet/homem-aranha-no-aranhaverso-legendado-2019-1080p_04d4c82aa.html" target="_blank" rel="noopener noreferrer">Assistir legendado</a>
+          </div>
+        </details>
+
+        <details class="cover-card">
+          <summary aria-label="Abrir opções do filme 8">
+            <img src="https://picsum.photos/seed/movie-cover-8/520/760" alt="Cover real temporário do filme 8" />
+            <span class="cover-label">???<span class="click-hint">Clique para assistir</span></span>
+          </summary>
+          <div class="actions">
+            <a class="btn" href="https://example.com/filme-8-dublado" target="_blank" rel="noopener noreferrer">Assistir dublado</a>
+            <a class="btn secondary" href="https://example.com/filme-8-legendado" target="_blank" rel="noopener noreferrer">Assistir legendado</a>
+          </div>
+        </details>
+      </div>
+    </section>
+        <p class="subtitle">🫠​ Site desenvolvido por ViquinhoDev</p>
+  </main>
+</body>
+</html>
